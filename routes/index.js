@@ -5,6 +5,12 @@ var mongodModel = require('../mongodb/mongodModel')
 var util = require('../util')
 var cookie = require('cookie-parser');
 var request = require('request');
+var formidable = require('formidable');
+var path = require('path');
+var multipart = require('connect-multiparty');
+var fs = require('fs');
+var TITLE = 'formidable上传示例';
+var varAVATAR_UPLOAD_FOLDER = '/images/';
 var time = ''
 
 /* GET home page. */
@@ -390,7 +396,6 @@ router.post('/nearBy', function(req, res, next) {
 
 router.post('/tips',function(req, res, next) {
   var input = req.body.input
-  console.log(input)
   var content = {
     status: '0', 
     msg: '查询成功',
@@ -443,6 +448,56 @@ router.post('/tips',function(req, res, next) {
   }
 
 })
+
+
+
+router.post('/upload', multipart(), function (req, res) {
+  var content = {
+    status: '-1000', 
+    msg: '上传失败',
+    data: []
+  };
+  //获得文件名
+  var pathName = req.query.filename
+  var filename = new Date().getTime()
+  var type = req.files.file.type.split('/')[1]
+  fs.exists('./public/images/'+pathName, function(exists){
+    if(!exists) {
+      fs.mkdir('./public/images/' + pathName, function(err){
+        if(!err){
+          //复制文件到指定路径
+          var targetPath = './public/images/' + pathName + '/' + filename + '.' + type;
+          //复制文件流
+          fs.createReadStream(req.files.file.path).pipe(fs.createWriteStream(targetPath));
+          mongodModel.aedModel.update({_id : pathName}, { $push : { imglist : filename + '.' + type}},function(error, docs){
+            if(error){
+              content.msg = '数据库更新失败'
+            }else{
+              content.status = 0
+              content.msg = '上传成功'
+            }
+          })
+        }
+      })
+    }else{
+      //复制文件到指定路径
+      var targetPath = './public/images/' + pathName + '/' + filename + '.' + type;
+      //复制文件流
+      fs.createReadStream(req.files.file.path).pipe(fs.createWriteStream(targetPath));
+      mongodModel.aedModel.update({_id : pathName}, { $push : { imglist : filename + '.' + type}},function(error, docs){
+        if(error){
+          content.msg = '数据库更新失败'
+        }else{
+          content.status = 0
+          content.msg = '上传成功'
+        }
+      })
+    }
+  });
+
+  //响应ajax请求，告诉它图片传到哪了
+  res.end(JSON.stringify(content));
+});
 
 
 

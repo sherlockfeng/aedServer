@@ -19,7 +19,9 @@ var aedSchema = new mongoose.Schema({
     latitude : {type:String},
     updatetime : {type:String},
     status : {type:Number,default:0},
-    city : {type:String,default:'中国'}
+    city : {type:String,default:'中国'},
+    dec : {type:String,default:''},
+    imglist : {type:Array,default:[]} 
 });
 
 var mongodModel = {
