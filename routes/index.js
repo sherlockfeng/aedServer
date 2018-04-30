@@ -501,4 +501,23 @@ router.post('/upload', multipart(), function (req, res) {
 
 
 
+router.post('/deleteImg', function(req, res, next) {
+  var content = {
+    status: '0', 
+    msg: '删除成功',
+    data: []
+  };
+  var targetPath = './public/images/' + req.body.id + '/' + req.body.name;
+  console.log(req.body)
+  fs.unlink(targetPath)
+  mongodModel.aedModel.updateMany({_id : req.body.id}, { $pull : { imglist : req.body.name}},function(error, docs){
+    if(error){
+      content.status= '-10000', 
+      content.msg = '删除成功失败'
+    }else{
+      res.end(JSON.stringify(content));
+    }
+  })
+});
+
 module.exports = router;
