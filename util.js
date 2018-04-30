@@ -1,5 +1,6 @@
 var PI = Math.PI;  
 var EARTH_RADIUS = 6378137.0
+var fs = require('fs');
 var util = {
     dateFtt:function (fmt,date)   {   
         var o = {   
@@ -27,7 +28,22 @@ var util = {
         var deltaLng = this.toRad(lng1) - this.toRad(lng2);
         var dis = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(deltaLat / 2), 2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(deltaLng / 2), 2)));
         return dis * 6378137;
-    }
+    },
+    deleteFolder: function(path) {
+        var files = [];
+        if( fs.existsSync(path) ) {
+            files = fs.readdirSync(path);
+            files.forEach(function(file,index){
+                var curPath = path + "/" + file;
+                if(fs.statSync(curPath).isDirectory()) { // recurse
+                    deleteFolder(curPath);
+                } else { // delete file
+                    fs.unlinkSync(curPath);
+                }
+            });
+            fs.rmdirSync(path);
+        }
+    },
 
 }
 

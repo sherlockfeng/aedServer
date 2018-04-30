@@ -21,7 +21,10 @@ var aedSchema = new mongoose.Schema({
     status : {type:Number,default:0},
     city : {type:String,default:'中国'},
     dec : {type:String,default:''},
-    imglist : {type:Array,default:[]} 
+    imglist : {type:Array,default:[]},
+    ismr : {type:Number,default:0},
+    extro:{type:String,default:''},
+    extro1:{type:String,default:''},
 });
 
 var mongodModel = {

@@ -81,6 +81,7 @@ router.post('/deleteAed', function(req, res, next) {
     data: []
   };
   var crtTime = new Date(); 
+  util.deleteFolder('./public/images/'+req.body.id)
   mongodModel.aedModel.remove({_id: { $in: req.body.id }}, function(error, docs) {
     if(error) {
       res.end(JSON.stringify(content));
@@ -363,6 +364,8 @@ router.post('/nearBy', function(req, res, next) {
   var toLongitude = 0
   var result = []
   var distance = 0
+  var imglist = []
+  var _id = ''
   mongodModel.aedModel.find({status:0}, function(error, docs) {
     if(error) {
       content.status = '-10000'
@@ -373,6 +376,8 @@ router.post('/nearBy', function(req, res, next) {
         toLatitude = docs[i].latitude
         toLongitude = docs[i].longitude
         distance = util.getDisance(latitude, longitude, toLatitude, toLongitude)
+        imglist = docs[i].imglist
+        _id = docs[i]._id
         console.log(docs[i],distance)
         if(distance < 100000){
           result.push({
@@ -380,7 +385,9 @@ router.post('/nearBy', function(req, res, next) {
             longitude: toLongitude,
             name: 'aed设备',
             address: docs[i].address,
-            distance: distance
+            distance: distance,
+            imglist: imglist,
+            _id:_id
           })
         }
       }
