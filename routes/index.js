@@ -51,7 +51,9 @@ router.post('/aedinfo', function(req, res, next) {
     latitude: body.latitude,
     status: body.status,
     updatetime: util.dateFtt("yyyy-MM-dd hh:mm:ss",crtTime),
-    city: body.city
+    city: body.city,
+    ismr: body.ismr,
+    dec: body.dec,
   }, function(error, docs) {
     if(error) {
       res.end(JSON.stringify(content));
@@ -121,7 +123,9 @@ router.post('/modifyAed', function(req, res, next) {
       latitude: body.latitude,
       status: body.status,
       updatetime: util.dateFtt("yyyy-MM-dd hh:mm:ss",crtTime),
-      city: body.city
+      city: body.city,
+      dec: body.dec,
+      ismr:body.ismr
     }
     var crtTime = new Date(); 
     mongodModel.aedModel.update({_id: body.id},change, function(error, docs) {
@@ -129,7 +133,7 @@ router.post('/modifyAed', function(req, res, next) {
         res.end(JSON.stringify(content));
       }else {
         content.status = '0'
-        content.msg = '删除成功'
+        content.msg = '新增成功'
         content.data = docs
         mongodModel.aedModel.find({}, function(error, docs) {
           if(error) {
@@ -378,16 +382,16 @@ router.post('/nearBy', function(req, res, next) {
         distance = util.getDisance(latitude, longitude, toLatitude, toLongitude)
         imglist = docs[i].imglist
         _id = docs[i]._id
-        console.log(docs[i],distance)
         if(distance < 100000){
           result.push({
             latitude: toLatitude,
             longitude: toLongitude,
-            name: 'aed设备',
+            name: 'AED设备('+docs[i].dec+')',
             address: docs[i].address,
             distance: distance,
             imglist: imglist,
-            _id:_id
+            _id:_id,
+            ismr:docs[i].ismr
           })
         }
       }
