@@ -83,7 +83,9 @@ router.post('/deleteAed', function(req, res, next) {
     data: []
   };
   var crtTime = new Date(); 
-  util.deleteFolder('./public/images/'+req.body.id)
+  for(var i=0;i<req.body.id.length;i++){
+    util.deleteFolder('./public/images/'+req.body.id[i])
+  }
   mongodModel.aedModel.remove({_id: { $in: req.body.id }}, function(error, docs) {
     if(error) {
       res.end(JSON.stringify(content));
@@ -386,7 +388,7 @@ router.post('/nearBy', function(req, res, next) {
           result.push({
             latitude: toLatitude,
             longitude: toLongitude,
-            name: 'AED设备('+docs[i].dec+')',
+            name: docs[i].dec===''?'AED设备':'AED设备('+docs[i].dec+')',
             address: docs[i].address,
             distance: distance,
             imglist: imglist,
