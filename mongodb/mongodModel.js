@@ -1,5 +1,6 @@
 var mongoose = require("mongoose")
-mongoose.connect('mongodb://localhost/admin');
+mongoose.connect('mongodb://localhost/admin')
+// mongoose.connect('mongodb://username:password@localhost/admin');
 let db = mongoose.connection
 db.on('error', function(){
     console.log('error')
