@@ -44,20 +44,23 @@ router.post('/register', function(req, res, next) {
     var result = JSON.parse(response.body)
     if(!result.errcode){
       var crtTime = new Date();
+      var updatetime = util.dateFtt("yyyy-MM-dd hh:mm:ss",crtTime)
       mongodModel.userModel.find({uid:result.openid}, function (error, doc) { 
         if(doc.length === 0) {
           mongodModel.userModel.create({
-            uid:result.openid,
-            isSe :0,
+            uid: result.openid,
+            isSe: 0,
+            updatetime
           }, function(error, docs) {
             if(error) {
               res.end(JSON.stringify(content));
-            }else {
+            } else {
               content.status = '0'
               content.msg = '注册成功'
               content.data = [{
                 uid:result.openid,
                 isSe :0,
+                updatetime
               }]
               res.end(JSON.stringify(content));
             }

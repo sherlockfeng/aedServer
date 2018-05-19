@@ -52,13 +52,22 @@ var userSchema = new mongoose.Schema({
     latitudeOther : {type:String,default:''},
     addressOther: {type:String,default:''},
 });
-
+var maydaySchema = new mongoose.Schema({
+    address : {type:String,default:''},
+    updatetime : {type:String,default:''},
+    uid : {type:String,default:''},
+    phone : {type:String,default:''},
+    secId : {type:String,default:''},
+    imgList : {type:Array,default:[]},
+    dec : {type:String,default:''},
+});
 var mongodModel = {
     adminModel: mongoose.model('admins', adminSchema),
     aedModel: mongoose.model('aeds', aedSchema),
     userModel: mongoose.model('users', userSchema),
+    maydayModel: mongoose.model('maydays', maydaySchema),
 }
 module.exports = mongodModel
 //admin 0 管理员 1 普通用户
 //aed 0 启用 1 停用
-//isSe 0 救生员 1 非救生员
+//isSe 0 非生员 1 救生员

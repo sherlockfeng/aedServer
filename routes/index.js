@@ -81,9 +81,10 @@ router.post('/deleteAed', function(req, res, next) {
     msg: '删除失败',
     data: []
   };
-  var crtTime = new Date(); 
+  var paths = path.join(__dirname, '../public/images/')
+  var crtTime = new Date();
   for(var i=0;i<req.body.id.length;i++){
-    util.deleteFolder('/opt/server/myServer/public/images/'+req.body.id[i])
+    util.deleteFolder(paths+req.body.id[i])
   }
   mongodModel.aedModel.remove({_id: { $in: req.body.id }}, function(error, docs) {
     if(error) {
@@ -476,35 +477,40 @@ router.post('/upload', multipart(), function (req, res) {
   var pathName = req.query.filename
   var filename = new Date().getTime()
   var type = req.files.file.type.split('/')[1]
-  fs.exists('/opt/server/myServer/public/images/'+pathName, function(exists){
+  var paths = path.join(__dirname, '../public/images/')
+  fs.exists(paths+pathName, function(exists){
     if(!exists) {
       content.status = '-100'
-      fs.mkdir('/opt/server/myServer/public/images/' + pathName, function(err){
+      fs.mkdir(paths + pathName, function(err){
         if(!err){
           //复制文件到指定路径
-          var targetPath = '/opt/server/myServer/public/images/' + pathName + '/' + filename + '.' + type;
+          var targetPath = paths + pathName + '/' + filename + '.' + type;
           //复制文件流
           fs.createReadStream(req.files.file.path).pipe(fs.createWriteStream(targetPath));
           mongodModel.aedModel.update({_id : pathName}, { $push : { imglist : filename + '.' + type}},function(error, docs){
               content.status = 0
               content.msg = '上传成功'
+              res.end(JSON.stringify(content));
+              
           })
+        }else{
+          res.end(JSON.stringify(content));
         }
       })
     }else{
-      content.status = '-200'
+      content.status = '0'
       //复制文件到指定路径
-      var targetPath = '/opt/server/myServer/public/images/' + pathName + '/' + filename + '.' + type;
+      var targetPath = paths + pathName + '/' + filename + '.' + type;
       //复制文件流
       fs.createReadStream(req.files.file.path).pipe(fs.createWriteStream(targetPath));
       mongodModel.aedModel.update({_id : pathName}, { $push : { imglist : filename + '.' + type}},function(error, docs){
           content.status = 0
           content.msg = '上传成功'
+          res.end(JSON.stringify(content));
       })
     }
-  });
+  })
   //响应ajax请求，告诉它图片传到哪了
-  res.end(JSON.stringify(content));
 });
 
 
@@ -515,7 +521,8 @@ router.post('/deleteImg', function(req, res, next) {
     msg: '删除成功',
     data: []
   };
-  var targetPath = '/opt/server/myServer/public/images/' + req.body.id + '/' + req.body.name;
+  var paths = path.join(__dirname, '../public/images/')
+  var targetPath = paths + req.body.id + '/' + req.body.name;
   console.log(req.body)
   fs.unlink(targetPath)
   mongodModel.aedModel.updateMany({_id : req.body.id}, { $pull : { imglist : req.body.name}},function(error, docs){
