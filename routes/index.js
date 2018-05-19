@@ -52,6 +52,7 @@ router.post('/aedinfo', function(req, res, next) {
     city: body.city,
     ismr: body.ismr,
     dec: body.dec,
+    phone: body.aedPhone
   }, function(error, docs) {
     if(error) {
       res.end(JSON.stringify(content));
@@ -125,7 +126,8 @@ router.post('/modifyAed', function(req, res, next) {
       updatetime: util.dateFtt("yyyy-MM-dd hh:mm:ss",crtTime),
       city: body.city,
       dec: body.dec,
-      ismr:body.ismr
+      ismr:body.ismr,
+      phone:body.aedPhone,
     }
     var crtTime = new Date(); 
     mongodModel.aedModel.update({_id: body.id},change, function(error, docs) {
@@ -370,6 +372,7 @@ router.post('/nearBy', function(req, res, next) {
   var distance = 0
   var imglist = []
   var _id = ''
+  var phone = ''
   mongodModel.aedModel.find({status:0}, function(error, docs) {
     if(error) {
       content.status = '-10000'
@@ -382,7 +385,6 @@ router.post('/nearBy', function(req, res, next) {
         distance = util.getDisance(latitude, longitude, toLatitude, toLongitude)
         imglist = docs[i].imglist
         _id = docs[i]._id
-        
         if(distance < 100000){
           result.push({
             latitude: toLatitude,
@@ -392,7 +394,8 @@ router.post('/nearBy', function(req, res, next) {
             distance: distance,
             imglist: imglist,
             _id:_id,
-            ismr:docs[i].ismr
+            ismr:docs[i].ismr,
+            phone: docs[i].phone || ''
           })
         }
       }
