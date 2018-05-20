@@ -29,7 +29,7 @@ router.get('/', function(req, res, next) {
 
 router.post('/', function(req, res, next) {
   var param = req.body
-  var crtTime = new Date();
+  var crtTime = new Date()
   var content = {
     status: '-10000', 
     msg: '新增失败',

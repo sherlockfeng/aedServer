@@ -32,7 +32,6 @@ router.get('/aedinfo', function(req, res, next) {
       res.end(JSON.stringify(content));
     }
   })
-
 });
 
 router.post('/aedinfo', function(req, res, next) {

@@ -51,6 +51,8 @@ var userSchema = new mongoose.Schema({
     longitudeOther : {type:String,default:''},
     latitudeOther : {type:String,default:''},
     addressOther: {type:String,default:''},
+    userId: {type:String,default:''},
+    company:{type:Number}
 });
 var maydaySchema = new mongoose.Schema({
     address : {type:String,default:''},
@@ -61,11 +63,22 @@ var maydaySchema = new mongoose.Schema({
     imgList : {type:Array,default:[]},
     dec : {type:String,default:''},
 });
+var msgSchema = new mongoose.Schema({
+    phone: {type:String,default: ''},
+    msgnum: {type:String,default: ''},
+    createdAt: {
+        type: Date,
+        required: true,
+        default:new Date()
+    },
+});
+mongoose.model('msgs', msgSchema).collection.createIndex( { "createdAt": 1 }, { expireAfterSeconds: 300 } )
 var mongodModel = {
     adminModel: mongoose.model('admins', adminSchema),
     aedModel: mongoose.model('aeds', aedSchema),
     userModel: mongoose.model('users', userSchema),
     maydayModel: mongoose.model('maydays', maydaySchema),
+    msgModel: mongoose.model('msgs', msgSchema),
 }
 module.exports = mongodModel
 //admin 0 管理员 1 普通用户

@@ -78,4 +78,25 @@ router.post('/register', function(req, res, next) {
   });
 });
 
+router.post('/modify', function(req, res, next) {
+  var content = {
+    status: '0', 
+    msg: '修改成功',
+    data: []
+  };
+  var param = req.body
+  // var phone = req.body.phone
+  // var userId = req.body.userId
+  // var username = req.body.username
+  var uid = req.body.uid
+  var crtTime = new Date(); 
+  param.updatetime = util.dateFtt("yyyy-MM-dd hh:mm:ss",crtTime),
+  mongodModel.userModel.update({uid: uid},param, function(err, docs) {
+    mongodModel.userModel.find({uid: uid},function(err, docs){
+      content.data = docs
+      res.end(JSON.stringify(content));
+    })
+  })
+});
+
 module.exports = router;
